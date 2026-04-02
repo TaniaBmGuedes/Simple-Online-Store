@@ -1,12 +1,12 @@
-import type { Route } from "./+types/home";
+import type { MetaFunction } from "@remix-run/node";
 
-export function meta({}: Route.MetaArgs) {
+export const meta: MetaFunction = () => {
   return [
     { title: "SimpleStore - Products" },
     { name: "description", content: "Browse our products" },
   ];
-}
-  
+};
+
 export default function Home() {
   return (
     <div>

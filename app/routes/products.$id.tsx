@@ -1,10 +1,9 @@
 import type {
-  ActionFunction,
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Form, useLoaderData, useNavigate } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { ProductDetail } from "types/product";
 import { StarRating } from "utils/star-rating";
@@ -58,9 +57,23 @@ export default function ProductDetail() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
-          <p className="text-2xl font-bold text-gray-900 mt-2">
-            ${product.price.toFixed(2)}
-          </p>
+          {product.discountPercentage > 0 ? (
+            <div className="flex items-center gap-3 mt-2">
+              <p className="text-2xl font-bold text-gray-900">
+                ${product.price.toFixed(2)}
+              </p>
+              <p className="text-lg text-gray-400 line-through">
+                ${(product.price / (1 - product.discountPercentage / 100)).toFixed(2)}
+              </p>
+              <span className="text-sm bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                -{product.discountPercentage.toFixed(0)}%
+              </span>
+            </div>
+          ) : (
+            <p className="text-2xl font-bold text-gray-900 mt-2">
+              ${product.price.toFixed(2)}
+            </p>
+          )}
           <Form method="post">
             <input type="hidden" name="title" value={product.title} />
             <input type="hidden" name="price" value={product.price} />
@@ -75,6 +88,11 @@ export default function ProductDetail() {
               Add to Cart
             </button>
           </Form>
+          <p
+            className={`text-sm mt-2 ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}
+          >
+            {product.stock > 0 ? `In Stock (${product.stock})` : "Out of Stock"}
+          </p>
 
           <hr className="my-6 border-gray-200" />
           <h2 className="text-sm font-semibold text-gray-900 mb-4">

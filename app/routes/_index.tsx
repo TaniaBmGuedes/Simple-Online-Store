@@ -4,7 +4,7 @@ import type { Product, ProductsResponse } from "types/product";
 import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import { urlBuilder } from "utils/url-builder";
 import type { Category } from "types/category";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,11 +19,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const sortBy = url.searchParams.get("sortBy") || "";
   const order = url.searchParams.get("order") || "asc";
   const category = url.searchParams.get("category") || "";
+  const search = url.searchParams.get("q") || "";
 
   const skip = (page - 1) * PRODUCTS_PER_PAGE;
 
   let productsUrl: string;
-  if (category) {
+  if (search) {
+    productsUrl = `https://dummyjson.com/products/search?q=${encodeURIComponent(search)}&limit=${PRODUCTS_PER_PAGE}&skip=${skip}`;
+  } else if (category) {
     productsUrl = `https://dummyjson.com/products/category/${category}?limit=${PRODUCTS_PER_PAGE}&skip=${skip}`;
   } else {
     productsUrl = `https://dummyjson.com/products?limit=${PRODUCTS_PER_PAGE}&skip=${skip}`;
@@ -46,11 +49,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     page,
     totalPages: Math.ceil(productsData.total / PRODUCTS_PER_PAGE),
     categories: categoriesData,
+    search,
   };
 }
 
 export default function Home() {
-  const { products, total, page, totalPages, categories } =
+  const { products, total, page, totalPages, categories, search } =
     useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
@@ -64,9 +68,28 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex gap-8">
         <div className="flex-1">
-          <div className="flex items-center justify-between mb-6 h-9">
+          <div className="flex items-center justify-between mb-6 gap-4">
+            <div className="relative flex-1 max-w-xs">
+              <input
+                type="text"
+                defaultValue={search}
+                placeholder="Search products..." 
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const value = (e.target as HTMLInputElement).value;
+                    window.location.href = urlBuilder(
+                      { q: value, page: "1", category: "" },
+                      searchParams,
+                    );
+                  }
+                }}
+                className="w-full border border-gray-300 rounded-md pl-9 pr-4 py-2 text-sm text-navy bg-white h-9"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+
+            {/* Sort */}
             <div className="relative">
-              {" "}
               <select
                 className="appearance-none border border-navy rounded-md px-4 py-2 pr-8 text-sm text-navy bg-white cursor-pointer h-9"
                 defaultValue={`${currentSort}-${currentOrder}`}
@@ -110,9 +133,23 @@ export default function Home() {
                 <h2 className="text-sm font-medium text-gray-900">
                   {product.title}
                 </h2>
-                <p className="text-sm text-gray-900 mt-1">
-                  ${product.price.toFixed(2)}
-                </p>
+                {product.discountPercentage > 0 ? (
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-sm font-semibold text-gray-900">
+                      ${product.price.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-400 line-through">
+                      ${(product.price / (1 - product.discountPercentage / 100)).toFixed(2)}
+                    </p>
+                    <span className="text-xs text-red-500 font-medium">
+                      -{product.discountPercentage.toFixed(0)}%
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-900 mt-1">
+                    ${product.price.toFixed(2)}
+                  </p>
+                )}
               </Link>
             ))}
           </div>

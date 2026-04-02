@@ -40,8 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 export default function Cart() {
   const { cart, total } = useLoaderData<typeof loader>();
-  const shipping = 20;
-  const grandTotal = total + shipping;
+
   if (cart.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
@@ -139,9 +138,8 @@ export default function Cart() {
             </div>
           ))}
         </div>
-              <CartSummary subTotal={total} shipping={20} />
+        <CartSummary subTotal={total} shipping={20} />
       </div>
-
     </div>
   );
 }

@@ -1,12 +1,10 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { PRODUCTS_PER_PAGE } from "constants_values";
-import type {
-  Product,
-  ProductsResponse,
-} from "types/product";
+import type { Product, ProductsResponse } from "types/product";
 import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import { urlBuilder } from "utils/url-builder";
 import type { Category } from "types/category";
+import { ChevronDown } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -66,25 +64,29 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex gap-8">
         <div className="flex-1">
-          <div className="flex items-center justify-between mb-8">
-            <select
-              className="appearance-none border border-gray-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 bg-white cursor-pointer"
-              defaultValue={`${currentSort}-${currentOrder}`}
-              onChange={(e) => {
-                const [sortBy, order] = e.target.value.split("-");
-                window.location.href = urlBuilder(
-                  { sortBy, order, page: "1" },
-                  searchParams,
-                );
-              }}
-            >
-              <option value="-">Sort by</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="title-asc">Name: A to Z</option>
-              <option value="title-desc">Name: Z to A</option>
-              <option value="rating-desc">Rating: Best first</option>
-            </select>
+          <div className="flex items-center justify-between mb-6 h-9">
+            <div className="relative">
+              {" "}
+              <select
+                className="appearance-none border border-navy rounded-md px-4 py-2 pr-8 text-sm text-navy bg-white cursor-pointer h-9"
+                defaultValue={`${currentSort}-${currentOrder}`}
+                onChange={(e) => {
+                  const [sortBy, order] = e.target.value.split("-");
+                  window.location.href = urlBuilder(
+                    { sortBy, order, page: "1" },
+                    searchParams,
+                  );
+                }}
+              >
+                <option value="-">Sort by</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="title-asc">Name: A to Z</option>
+                <option value="title-desc">Name: Z to A</option>
+                <option value="rating-desc">Rating: Best first</option>
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy pointer-events-none" />
+            </div>
 
             <p className="text-sm text-gray-500">
               Showing {start}-{end} of {total}

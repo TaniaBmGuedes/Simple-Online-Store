@@ -1,20 +1,87 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import type { ProductDetail } from "types/product";
+import { StarRating } from "utils/star-rating";
+import type { Review } from "types/review";
 
-export const meta: MetaFunction = () => {
-  return [{ title: "Product Detail" }];
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    { title: data ? `${data.product.title} - The Online Store` : "Product" },
+  ];
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  return { id: params.id };
+  const res = await await fetch(`https://dummyjson.com/products/${params.id}`);
+  if (!res.ok) {
+    throw json({ message: "Product not found" }, { status: 404 });
+  }
+  const product: ProductDetail = await res.json();
+  return json({ product });
 }
 
 export default function ProductDetail() {
-  const { id } = useLoaderData<typeof loader>();
+  const { product } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>Product {id}</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <button
+        onClick={() => navigate(-1)}
+        className="hover:text-gray-900 text-sm"
+      >
+        &larr; Back
+      </button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          <img
+            src={product.images[0] || product.thumbnail}
+            alt={product.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
+          <p className="text-2xl font-bold text-gray-900 mt-2">
+            ${product.price.toFixed(2)}
+          </p>
+
+          <button className="w-full mt-6 bg-gray-900 text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition-colors font-mono text-sm">
+            Add to Cart
+          </button>
+
+          <hr className="my-6 border-gray-200" />
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">
+            Product Details
+          </h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {product.description}
+          </p>
+        </div>
+      </div>
+      {product.reviews.length > 0 && (
+        <div className="mt-16">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">
+            Reviews ({product.reviews.length})
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {product.reviews.map((review: Review, i: number) => (
+              <div key={i} className="border border-gray-200 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-medium text-gray-900">
+                    {review.reviewerName}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(review.date).toLocaleDateString()}
+                  </span>
+                </div>
+                <StarRating rating={review.rating} />
+                <p className="text-sm text-gray-600 mt-3">{review.comment}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

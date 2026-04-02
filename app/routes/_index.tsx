@@ -1,12 +1,12 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { PRODUCTS_PER_PAGE } from "constants_values";
 import type {
-  Category,
   Product,
   ProductsResponse,
-} from "types/product/products";
+} from "types/product";
 import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import { urlBuilder } from "utils/url-builder";
+import type { Category } from "types/category";
 
 export const meta: MetaFunction = () => {
   return [

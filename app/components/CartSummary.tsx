@@ -6,7 +6,6 @@ export function CartSummary({
   shipping: number;
 }) {
   const total = subTotal + shipping;
-  const s = shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`;
   return (
     <div className="w-full max-w-100 border border-gray-900 rounded-lg p-4">
       <h2 className="text-lg font-bold text-gray-900 mb-6">Cart Summary</h2>

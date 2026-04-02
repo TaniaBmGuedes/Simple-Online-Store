@@ -12,6 +12,8 @@ A simple e-commerce application built with Remix v2, featuring product browsing,
 | [Tailwind CSS](https://tailwindcss.com) | 4 | Utility-first CSS framework for rapid styling |
 | [Vite](https://vite.dev) | 7 | Fast build tool and development server with HMR |
 | [Lucide React](https://lucide.dev) | 1 | Icon library |
+| [ESLint](https://eslint.org) | 9 | Code linting with TypeScript support |
+| [Husky](https://typicode.github.io/husky) | 9 | Git hooks to enforce lint checks before commits |
 
 ## Prerequisites
 
@@ -55,11 +57,30 @@ The app will be available at `http://localhost:5173`.
 
 ```
 app/
-├── components/     # Reusable UI components
-├── routes/         # Remix file-based routes
-├── root.tsx        # Root layout component
-└── app.css         # Global styles
+├── components/     # Reusable UI components (Header, CartSummary)
+├── routes/
+│   ├── _index.tsx        # Homepage with product grid, search, sort, filter, pagination
+│   ├── products.$id.tsx  # Product detail page with reviews and add to cart
+│   └── cart.tsx          # Shopping cart with quantity controls
+├── root.tsx              # Root layout with header and cart count
+└── app.css               # Global styles and theme variables
+types/                    # TypeScript type definitions
+utils/                    # Server utilities (cart session, URL builder, star rating)
 ```
+
+## Features
+
+- Product listing with grid layout
+- Search products by name
+- Sort by price, name, or rating
+- Filter by category
+- Pagination with smart page numbers
+- Product detail page with image, stock info, and reviews
+- Discount prices with original price strikethrough and percentage badge
+- Shopping cart with cookie-based session storage
+- Quantity controls and item removal
+- Cart summary with subtotal, shipping, and promo code input
+- Pre-commit hook to enforce lint checks
 
 ## API
 

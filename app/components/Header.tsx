@@ -1,7 +1,7 @@
 import { Link } from "@remix-run/react";
 import { Search, ShoppingBag, User } from "lucide-react";
 
-export default function Header() {
+export default function Header({ cartCount = 0 }: { cartCount: number }) {
   return (
     <header className="border-b border-gray-200">
       <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,9 +57,14 @@ export default function Header() {
             <Link
               to="/cart"
               aria-label="Cart"
-              className="text-gray-700 hover:text-gray-900"
+              className="relative text-gray-700 hover:text-gray-900"
             >
               <ShoppingBag className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>

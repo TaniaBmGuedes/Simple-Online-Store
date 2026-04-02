@@ -1,9 +1,16 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import type {
+  ActionFunction,
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
+import { Form, Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { ProductDetail } from "types/product";
 import { StarRating } from "utils/star-rating";
 import type { Review } from "types/review";
+import { addToCart } from "utils/cart.server";
+import { ShoppingBag } from "lucide-react";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -20,6 +27,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return json({ product });
 }
 
+export async function action({ request, params }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const id = Number(params.id);
+  const title = String(formData.get("title"));
+  const price = Number(formData.get("price"));
+  const thumbnail = String(formData.get("thumbnail"));
+  const cookie = await addToCart(request, { id, title, price, thumbnail });
+  return json({ success: true }, { headers: { "Set-Cookie": cookie } });
+}
 export default function ProductDetail() {
   const { product } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
@@ -45,10 +61,20 @@ export default function ProductDetail() {
           <p className="text-2xl font-bold text-gray-900 mt-2">
             ${product.price.toFixed(2)}
           </p>
+          <Form method="post">
+            <input type="hidden" name="title" value={product.title} />
+            <input type="hidden" name="price" value={product.price} />
+            <input type="hidden" name="thumbnail" value={product.thumbnail} />
+            <input type="hidden" name="title" value={product.title} />
 
-          <button className="w-full mt-6 bg-gray-900 text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition-colors font-mono text-sm">
-            Add to Cart
-          </button>
+            <button
+              type="submit"
+              className="w-full flex justify-center mt-6 bg-gray-900 text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition-colors font-mono text-sm gap-4"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              Add to Cart
+            </button>
+          </Form>
 
           <hr className="my-6 border-gray-200" />
           <h2 className="text-sm font-semibold text-gray-900 mb-4">

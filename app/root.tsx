@@ -1,13 +1,17 @@
 import {
+  json,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import Header from "./components/Header";
-import "./app.css";
+import "./app.css"; 
+import type { CartItem } from "types/cart";
+import { getCart } from "utils/get-cart";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,6 +26,11 @@ export const links: LinksFunction = () => [
   },
 ];
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const cart = await getCart(request);
+  const cartCount = cart.reduce((total:number, item:CartItem) => total + item.quantity, 0);
+  return json({ cartCount });
+}
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -41,9 +50,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const {cartCount} = useLoaderData<typeof loader>();
   return (
     <>
-      <Header />
+      <Header cartCount={cartCount} />
       <Outlet />
     </>
   );

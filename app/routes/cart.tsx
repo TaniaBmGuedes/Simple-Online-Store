@@ -1,6 +1,5 @@
 import {
   json,
-  type ActionFunction,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
   type MetaFunction,
@@ -13,6 +12,7 @@ import {
   type CartItem,
 } from "utils/cart.server";
 import { getCart } from "utils/get-cart";
+import { CartSummary } from "~/components/CartSummary";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Shopping Cart - The Online Store" }];
@@ -139,7 +139,9 @@ export default function Cart() {
             </div>
           ))}
         </div>
+              <CartSummary subTotal={total} shipping={20} />
       </div>
+
     </div>
   );
 }

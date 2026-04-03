@@ -41,7 +41,7 @@ export default function Header({ cartCount = 0 }: { cartCount: number }) {
           </nav>
           <div className="flex items-center gap-6">
             <Link
-              to="/search"
+              to="/"
               aria-label="Search"
               className="text-gray-700 hover:text-gray-900"
             >

@@ -73,7 +73,7 @@ export default function Home() {
               <input
                 type="text"
                 defaultValue={search}
-                placeholder="Search products..." 
+                placeholder="Search products..."
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     const value = (e.target as HTMLInputElement).value;
@@ -87,8 +87,6 @@ export default function Home() {
               />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
-
-            {/* Sort */}
             <div className="relative">
               <select
                 className="appearance-none border border-navy rounded-md px-4 py-2 pr-8 text-sm text-navy bg-white cursor-pointer h-9"
@@ -139,7 +137,11 @@ export default function Home() {
                       ${product.price.toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-400 line-through">
-                      ${(product.price / (1 - product.discountPercentage / 100)).toFixed(2)}
+                      $
+                      {(
+                        product.price /
+                        (1 - product.discountPercentage / 100)
+                      ).toFixed(2)}
                     </p>
                     <span className="text-xs text-red-500 font-medium">
                       -{product.discountPercentage.toFixed(0)}%

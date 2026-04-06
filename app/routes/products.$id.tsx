@@ -18,7 +18,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const res = await await fetch(`https://dummyjson.com/products/${params.id}`);
+  const res = await fetch(`https://dummyjson.com/products/${params.id}`);
   if (!res.ok) {
     throw json({ message: "Product not found" }, { status: 404 });
   }

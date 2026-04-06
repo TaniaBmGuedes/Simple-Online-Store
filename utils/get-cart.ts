@@ -10,7 +10,7 @@ export const cartStorage = createCookieSessionStorage({
         path : "/",
         sameSite : "lax",
         secure : process.env.NODE_ENV === "production",
-         secrets: ["s3cr3t-cart-k3y"],
+        secrets: [process.env.SESSION_SECRET!],
     },
 });
 

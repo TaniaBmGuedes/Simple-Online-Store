@@ -14,7 +14,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const name = String(formData.get("name"));
   const email = String(formData.get("email"));
-  const subject = String(formData.get("subject"));
   const message = String(formData.get("message"));
   if (!name || !email || !message) {
     return json({
